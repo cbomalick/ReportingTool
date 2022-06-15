@@ -50,7 +50,6 @@ class TimeSpentInMinutes {
 
         //Get unique Edited By values
         $uniqueOwners = array_unique(array_column($data, 'Edited By'));
-        $caseReasons = array_unique(array_column($data, 'Case Reason'));
 
             //Loop through and sort into groups by each Case Owner
             foreach($uniqueOwners as $editedBy){
@@ -60,20 +59,25 @@ class TimeSpentInMinutes {
                 });
             }
 
-            //Loop through the individual arrays for each analyst
+            //Build each analyst
             foreach($filteredArray as $groupedCases){
                 $analyst = new Analyst($groupedCases);
-                Echo"<pre>";
-                var_dump($analyst);
-                Echo"</pre><br/><br/>";
+
+                //Calculate grand totals from all analysts
+                $this->grandCount += $analyst->totalCases;
+                $this->grandTime += $analyst->totalTime;
+
+                //Collect analysts into array
+                $this->analysts[] = $analyst;
             }
             
-            
+            //Print the report
+            $this->printTable();
 
-        //Final output
-        //Case Owner
-        //Subtotal Cases
-        //Subtotal Time
+            // Echo"<pre>";
+            //     var_dump($this);
+            //     Echo"</pre><br/><br/>";
+            
     }
 
     private function importData($rawData){
@@ -110,9 +114,6 @@ class TimeSpentInMinutes {
 
     public function printTable(){
         $count = 1;
-        $reasons = ["Coaching","Inquiry","Service Request","Support Task","Tech Interface Activation"];
-        $totalCases = 0;
-        $totalTime = 0;
 
         Echo"<table class=\"table padded\">";
 
@@ -126,43 +127,35 @@ class TimeSpentInMinutes {
         </thead>";
 
         Echo"<tbody>";
-            foreach($this->colors as $count=>$color){
-                $subtotalCases = 0;
-                $subtotalTime = 0;
-
-                foreach($reasons as $reason){
-                    $caseCount = rand(2,20);
-                    $timeSpent = round((rand(35,95)/10) * $caseCount);
-
-                    //Add to subtotal
-                    $subtotalCases += $caseCount ?? 0;
-                    $subtotalTime += $timeSpent ?? 0;
-                    
-                    Echo"
-                    <tr class=\"group{$count}\">
-                        <td class=\"\">Analyst {$count}</td>
-                        <td class=\"\">{$reason}</td>
-                        <td class=\"\">{$caseCount}</td>
-                        <td class=\"\">{$timeSpent}</td>
-                    </tr>";
+        //Cycle through each analyst
+            foreach($this->analysts as $analyst){
+                    //Print each Case Reason and the counts associated with them
+                foreach($analyst->caseReasons as $caseReason){
+                Echo"
+                <tr class=\"group{$count}\">
+                    <td class=\"\">{$analyst->name}</td>
+                    <td class=\"\">{$caseReason}</td>
+                    <td class=\"\">{$analyst->caseCount[$caseReason]}</td>
+                    <td class=\"\">{$analyst->caseTime[$caseReason]}</td>
+                </tr>";
                 }
-                
-    
+
+                //Print the subtotals
                 Echo"<tr class=\"group{$count} darken\">
                     <td class=\"bold\">Subtotal</td>
                     <td class=\"\"></td>
-                    <td class=\"bold\">{$subtotalCases} cases</td>
-                    <td class=\"bold\">{$subtotalTime} minutes</td>
+                    <td class=\"bold\">{$analyst->totalCases} cases</td>
+                    <td class=\"bold\">{$analyst->totalTime} minutes</td>
                 </tr>"; 
-                $totalCases += $subtotalCases;
-                $totalTime += $subtotalTime;
+
+                $count++; //Used to make color unique for each analyst
             }
             
             Echo"<tr class=\"grandtotal\">
                 <td class=\"bold\">Grand Total</td>
                 <td class=\"\"></td>
-                <td class=\"bold\">{$totalCases} cases</td>
-                <td class=\"bold\">{$totalTime} minutes</td>
+                <td class=\"bold\">{$this->grandCount} cases</td>
+                <td class=\"bold\">{$this->grandTime} minutes</td>
             </tr>
         </tbody>"; 
     

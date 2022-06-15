@@ -1,5 +1,9 @@
 <?php
 
+//Display all errors
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // Echo"<pre>";
 // var_dump(get_defined_vars());
 // Echo"</pre><br><br>";
@@ -7,6 +11,7 @@
 
 require_once("src/TimeSpentInMinutes.class.php");
 require_once("src/row.class.php");
+require_once("src/caseowner.class.php");
 
 if(!empty($_POST)){
     $data = htmlentities($_POST['data'], ENT_QUOTES);
@@ -15,9 +20,7 @@ if(!empty($_POST)){
     $data = '';
     $inputType = '';
   }
-
   
-
 $report = new TimeSpentInMinutes();
 
 ?>
