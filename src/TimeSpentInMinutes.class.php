@@ -62,17 +62,18 @@ class TimeSpentInMinutes {
             
             //Print the report
             $this->printTable();
-
-            // Echo"<pre>";
-            //     var_dump($this);
-            //     Echo"</pre><br/><br/>";
-            
     }
 
     private function importData($rawData){
-        $data = explode(PHP_EOL, str_replace(['"',"'", "&quot;"], "", $rawData));
+        $data = explode(PHP_EOL, str_replace(['"',"'", "&quot;"], "", $rawData)); //Remove quotation marks and separate rows into array
 
-        $headers = explode(",", substr_replace($data[0],"", -1));
+        if($this->inputType == "comma"){
+            $separator = ",";
+        } else if($this->inputType == "tab"){
+            $separator = "\t";
+        }
+
+        $headers = explode($separator, substr_replace($data[0],"", -1));
         unset($data[0]); //Remove headers from array after storing in $headers
         $currentRow = 1;
 
@@ -84,7 +85,7 @@ class TimeSpentInMinutes {
             }
             
             //Break row string into individual columns
-            $columns = explode(",", $row);
+            $columns = explode($separator, $row);
 
             //Begin importDataing the  values in each column
                 //Transform array into key=>value
@@ -131,21 +132,24 @@ class TimeSpentInMinutes {
                 }
 
                 //Print the subtotals
+                $totalHours = round(($analyst->totalTime / 60), 1);
                 Echo"<tr class=\"group{$count} darken\">
                     <td class=\"bold\">Subtotal</td>
                     <td class=\"\"></td>
                     <td class=\"bold\">{$analyst->totalCases} cases</td>
-                    <td class=\"bold\">{$analyst->totalTime} minutes</td>
+                    <td class=\"bold\">{$analyst->totalTime} minutes / {$totalHours} Hours</td>
                 </tr>"; 
 
                 $count++; //Used to make color unique for each analyst
             }
             
+            //Print grand totals
+            $grandHours = round(($this->grandTime / 60), 1);
             Echo"<tr class=\"grandtotal\">
                 <td class=\"bold\">Grand Total</td>
                 <td class=\"\"></td>
                 <td class=\"bold\">{$this->grandCount} cases</td>
-                <td class=\"bold\">{$this->grandTime} minutes</td>
+                <td class=\"bold\">{$this->grandTime} minutes / {$grandHours} Hours</td>
             </tr>
         </tbody>"; 
     

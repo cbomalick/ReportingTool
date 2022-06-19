@@ -25,6 +25,8 @@ class Analyst {
             $this->caseTime[$caseReason] += (int) $case["Time Spent"];
         }
 
+        sort($this->caseReasons); //Sort case reasons alphabetically
+
         //Get total count
         foreach($this->caseCount as $count){
             $this->totalCases += $count;

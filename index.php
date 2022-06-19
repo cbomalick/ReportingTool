@@ -22,6 +22,11 @@ if(!empty($_POST)){
   }
   
 $report = new TimeSpentInMinutes();
+if($inputType == "tab" OR $inputType == "comma"){
+    $report->inputType = $inputType;
+} else {
+    $report->inputType = "error";
+}
 
 ?>
 
@@ -60,19 +65,13 @@ $report = new TimeSpentInMinutes();
                 <div class="boxwrapper">
                     <div class="box smallbox">
                         <div class="boxcontent">
-                            <h2>Paste CSV below</h2>
+                            <h2>Paste data below</h2>
                                 <form autocomplete="off" action="" id="data" method="post" enctype="multipart/form-data">
 
-                                    <?
-                                    //Paste from CSV Source<input type="radio" name="inputType" value="test1"> <br/>
-                                    //Paste from Excel<input type="radio" name="inputType" value="test2"> <br/><br/>
-                                    ?>
+                                Paste from Excel<input type="radio" name="inputType" checked="true" value="tab"> <br/>
+                                    Paste CSV<input type="radio" name="inputType" value="comma"> <br/><br/>
 
-                                    <textarea name="data" id="data">Case Number,Edit Date,Case Reason,Old Value,New Value,Edited By
-03173907,6/13/2022 3:25 PM,Tech Interface Activation,240,380,Albaro Moya
-03201262,6/10/2022 4:01 PM,Support Tasks,,60,Albaro Moya
-03231699,6/13/2022 2:47 PM,Service Request,,45,Anthony Trokey
-03187410,6/13/2022 1:11 PM,Tech Interface Activation,115,205,Anthony Trokey</textarea>
+                                    <textarea name="data" id="data"></textarea>
 
                                     <br/><br/>
                                     <button class="button" type="submit" name="submit" id="submit">Submit</button>
@@ -85,11 +84,7 @@ $report = new TimeSpentInMinutes();
                         <div class="boxcontent">
                             <div class="table">
                                 <?php
-                                //$report->printTable();
                                 $report->generateReport($data);
-                                // Echo"<pre>";
-                                // var_dump($clean);
-                                // Echo"</pre><br/><br/>";
                                 ?>
                             </div>
                         </div>
