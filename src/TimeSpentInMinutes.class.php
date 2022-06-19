@@ -24,17 +24,6 @@ class TimeSpentInMinutes {
             "fae187",
             "e8ba86"
             ];
-
-            $this->colors = [
-                "ddedea",
-                "daeaf6",
-                "e8dff5",
-                "fce1e4",
-                "fcf4dd",
-                "dcd9f8"
-                ];
-
-
     }
 
     public function generateStyles(){
@@ -81,7 +70,8 @@ class TimeSpentInMinutes {
     }
 
     private function importData($rawData){
-        $data = explode(PHP_EOL, $rawData);
+        $data = explode(PHP_EOL, str_replace(['"',"'", "&quot;"], "", $rawData));
+
         $headers = explode(",", substr_replace($data[0],"", -1));
         unset($data[0]); //Remove headers from array after storing in $headers
         $currentRow = 1;
